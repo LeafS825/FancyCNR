@@ -1,14 +1,14 @@
 {
-  "name": "cyrene-name-roller-plugin-template",
-  "version": "1.1.1",
+  "name": "fancycnr",
+  "version": "0.3.2",
   "private": true,
   "type": "module",
   "scripts": {
     "validate": "cnrp validate .",
-    "build": "cnrp pack . --out dist/cyrene-plugin-template.cnrp"
+    "build": "cnrp pack . --out dist/FancyCNR.cnrp"
   },
   "devDependencies": {
-    "@cyrene2008/cyrene-name-roller": "file:vendor/cyrene-name-roller-plugin-sdk-1.2.0.tgz"
+    "@starcyrene/cyrene-name-roller": "file:vendor/starcyrene-cyrene-name-roller-1.3.0.tgz"
   },
   "engines": {
     "node": ">=20"

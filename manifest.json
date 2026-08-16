@@ -1,79 +1,409 @@
 {
   "schemaVersion": 1,
-  "id": "cn.example.cyrene.plugin",
-  "name": "Cyrene Plugin Template",
-  "version": "1.1.0",
-  "author": "Your Name",
-  "description": "A first-party-style CyreneNameRoller plugin template.",
-  "engine": { "min": "1.2.0", "max": "1.2.0" },
+  "id": "com.cyrene2008.fancycnr",
+  "name": "FancyCNR",
+  "version": "0.3.2",
+  "author": "FancyCNR contributors",
+  "description": "为 CyreneNameRoller 提供受宿主管理的界面显隐、样式与结果布局选项。",
+  "engine": { "min": "1.3.0", "max": "1.3.0" },
   "entry": "src/worker.js",
   "icon": "assets/icon.svg",
   "readme": "README.md",
   "permissions": [
     "storage:read",
-    "storage:write",
-    "events:draw",
-    "events:lifecycle",
-    "draw:execute",
-    "ui:animations",
-    "ui:visual-surfaces",
-    "notifications:show",
-    "audio:select",
-    "audio:play"
+    "ui:component-styles",
+    "ui:component-overrides",
+    "ui:result-presentations"
   ],
   "contributes": {
     "pages": [
       {
         "id": "settings",
-        "title": "Template Plugin",
-        "icon": "apps-24-regular",
-        "location": "plugins",
-        "description": "Native Fluent settings rendered by CyreneNameRoller.",
+        "title": "FancyCNR 界面定制",
+        "titleEn": "FancyCNR customization",
+        "icon": "settings-24-regular",
+        "location": "dock",
+        "order": 760,
+        "description": "从侧边栏直接配置 FancyCNR 提供的样式、显隐和结果布局选项。",
         "native": {
           "type": "settings",
           "settingsKey": "settings",
           "controls": [
-            { "id": "enabled", "type": "toggle", "path": "enabled", "label": "启用插件", "description": "保留配置但暂停插件行为。", "default": true },
-            { "id": "volume", "type": "range", "path": "volume", "label": "音量", "description": "范围控件示例。", "min": 0, "max": 1, "step": 0.01, "default": 0.7 },
-            { "id": "mode", "type": "select", "path": "mode", "label": "工作模式", "description": "下拉选择控件示例。", "default": "summary", "options": [{ "value": "summary", "label": "每次抽取一次" }, { "value": "each", "label": "每个结果一次" }] },
-            { "id": "sound", "type": "audio", "path": "sound", "label": "结果音效", "description": "支持常见本地音频格式。", "accept": "audio/*,.mp3,.m4a,.wav,.flac,.ogg", "default": null },
-            { "id": "roller-motion", "type": "animation-select", "target": "roller.finish", "packId": "template-motion", "label": "点名结果动画", "description": "由宿主渲染动画选择器，并安全应用本插件的动画预设。" },
-            { "id": "page-motion", "type": "animation-select", "target": "page.transition", "packId": "template-motion", "label": "页面切换动画", "description": "切换插件贡献的页面过渡效果。" }
+            { "id": "style-navigation", "type": "component-style-select", "target": "navigation.dock", "label": "样式 · 侧边导航", "description": "调整侧边 Dock 的尺寸、字号和密度。" },
+            { "id": "style-title-bar", "type": "component-style-select", "target": "app.title-bar", "label": "样式 · 桌面标题栏", "description": "调整 Windows 桌面端标题栏；Web 端不可用。" },
+            { "id": "style-version-badge", "type": "component-style-select", "target": "app.version-badge", "label": "样式 · 版本标记", "description": "调整版本标记的字号和留白。" },
+            { "id": "style-current-list", "type": "component-style-select", "target": "roller.current-list", "label": "样式 · 当前名单", "description": "调整当前名单选择区域的尺寸和间距。" },
+            { "id": "style-roller-filters", "type": "component-style-select", "target": "roller.filters", "label": "样式 · 点名筛选器", "description": "调整点名筛选区域的尺寸和密度。" },
+            { "id": "style-primary-action", "type": "component-style-select", "target": "roller.primary-action", "label": "样式 · 点名主按钮", "description": "调整点名页面主要操作按钮的尺寸和字号。" },
+            { "id": "style-roller-result", "type": "component-style-select", "target": "roller.result", "label": "样式 · 点名结果", "description": "调整宿主权威点名结果的字号、间距和对齐方式。" },
+            { "id": "style-card-controls", "type": "component-style-select", "target": "card.controls", "label": "样式 · 卡牌控制区", "description": "调整卡牌按钮与控制项的尺寸和间距。" },
+            { "id": "style-card-deck", "type": "component-style-select", "target": "card.deck", "label": "样式 · 卡牌牌组", "description": "调整牌组尺寸和间距。" },
+            { "id": "style-card-item", "type": "component-style-select", "target": "card.item", "label": "样式 · 单张卡片", "description": "调整卡片字号、圆角和阴影。" },
+            { "id": "style-lottery-result", "type": "component-style-select", "target": "lottery.result", "label": "样式 · 抽奖结果", "description": "调整宿主权威抽奖结果的字号和对齐方式。" },
+            { "id": "style-statistics", "type": "component-style-select", "target": "statistics.summary", "label": "样式 · 统计摘要", "description": "调整统计摘要的字号和间距。" },
+            { "id": "override-version-badge", "type": "component-override-toggle", "target": "app.version-badge", "packId": "hide-version-badge", "label": "隐藏版本标记", "description": "开启后隐藏版本标记并收起空间。" },
+            { "id": "override-roller-filters", "type": "component-override-select", "target": "roller.filters", "label": "显隐 · 点名筛选器", "description": "显示、压缩或隐藏点名筛选器。" },
+            { "id": "override-filter-english-mode", "type": "component-override-toggle", "target": "roller.filter.english-mode", "packId": "hide-english-mode", "label": "隐藏 English Mode", "description": "只隐藏 English Mode 开关，保留当前设置值。" },
+            { "id": "override-filter-draw-target", "type": "component-override-toggle", "target": "roller.filter.draw-target", "packId": "hide-draw-target", "label": "隐藏人员/小组选择", "description": "只隐藏抽取人员或小组的目标选择器，保留当前模式。" },
+            { "id": "override-filter-gender", "type": "component-override-toggle", "target": "roller.filter.gender", "packId": "hide-gender-filter", "label": "隐藏性别筛选", "description": "只隐藏性别筛选器，保留当前或默认筛选值。" },
+            { "id": "override-filter-draw-count", "type": "component-override-toggle", "target": "roller.filter.draw-count", "packId": "hide-draw-count-mode", "label": "隐藏单人/多人选择", "description": "只隐藏单人或多人模式选择器，保留当前模式。" },
+            { "id": "override-filter-duplicates", "type": "component-override-toggle", "target": "roller.filter.duplicates", "packId": "hide-duplicates-filter", "label": "隐藏重复设置", "description": "只隐藏是否允许重复的选择器，保留当前设置。" },
+            { "id": "override-filter-count", "type": "component-override-toggle", "target": "roller.filter.count", "packId": "hide-count-control", "label": "隐藏抽取数量", "description": "只隐藏多人模式下的数量控制，保留当前数量。" },
+            { "id": "override-card-controls", "type": "component-override-toggle", "target": "card.controls", "packId": "hide-card-controls", "label": "隐藏卡牌控制区", "description": "开启后隐藏卡牌界面的整组按钮与控制项。" },
+            { "id": "override-statistics", "type": "component-override-select", "target": "statistics.summary", "label": "显隐 · 统计摘要", "description": "显示统计摘要，或选择隐藏后的布局方式。" },
+            { "id": "result-presentation", "type": "result-presentation-select", "target": "roller.result", "label": "结果 · 点名呈现布局", "description": "选择单项、列表、网格或聚光布局；结果内容始终由宿主提供。" }
           ]
+        }
+      }
+    ],
+    "componentStylePacks": [
+      {
+        "id": "large-results",
+        "title": "醒目结果",
+        "description": "放大并居中点名与抽奖结果。",
+        "targets": {
+          "roller.result": {
+            "size": "large",
+            "fontFamily": "host:display",
+            "fontSize": 72,
+            "fontWeight": 700,
+            "alignment": "center",
+            "padding": "comfortable",
+            "gap": "comfortable"
+          },
+          "lottery.result": {
+            "size": "large",
+            "fontFamily": "host:display",
+            "fontSize": 48,
+            "fontWeight": 700,
+            "alignment": "center"
+          }
         }
       },
       {
-        "id": "draw-studio",
-        "title": "抽取实验室",
-        "titleEn": "Draw Studio",
-        "icon": "wand-24-regular",
-        "location": "dock",
-        "order": 720,
-        "description": "使用宿主 CAF 和记录事务构建全新的点名玩法。",
-        "entry": "pages/draw-studio.html"
-      }
-    ],
-    "animationPacks": [
+        "id": "compact-navigation",
+        "title": "紧凑导航",
+        "description": "缩小 Dock 导航的字号与密度。",
+        "targets": {
+          "navigation.dock": {
+            "size": "small",
+            "fontFamily": "host:ui",
+            "fontSize": 14,
+            "fontWeight": 600,
+            "density": "compact"
+          }
+        }
+      },
       {
-        "id": "template-motion",
-        "title": "Template Motion",
-        "description": "页面、点名、翻牌、抽奖与全局效果示例。",
-        "source": "animations/template-motion.json"
-      }
-    ],
-    "visualSurfaces": [
+        "id": "compact-roller",
+        "title": "紧凑点名控件",
+        "description": "压缩当前名单和筛选器的间距。",
+        "targets": {
+          "roller.current-list": {
+            "size": "medium",
+            "fontFamily": "host:ui",
+            "fontSize": 14,
+            "fontWeight": 600,
+            "padding": "compact",
+            "gap": "compact"
+          },
+          "roller.filters": {
+            "size": "small",
+            "fontFamily": "host:ui",
+            "fontSize": 13,
+            "fontWeight": 500,
+            "padding": "compact",
+            "gap": "compact"
+          }
+        }
+      },
       {
-        "id": "ambient-particles",
-        "title": "Ambient Particles",
-        "entry": "src/visual.js",
-        "placement": "background",
-        "events": ["app:theme-changed", "app:resize", "draw:result"],
-        "defaultEnabled": true
+        "id": "large-primary-action",
+        "title": "大号主操作",
+        "description": "放大点名页面的主要操作按钮。",
+        "targets": {
+          "roller.primary-action": {
+            "size": "large",
+            "fontFamily": "host:ui",
+            "fontSize": 18,
+            "fontWeight": 700,
+            "radius": 8
+          }
+        }
+      },
+      {
+        "id": "compact-cards",
+        "title": "紧凑卡牌",
+        "description": "缩小卡牌控制区并收紧牌组间距。",
+        "targets": {
+          "card.controls": {
+            "size": "small",
+            "fontFamily": "host:ui",
+            "fontSize": 14,
+            "fontWeight": 600,
+            "padding": "compact",
+            "gap": "compact"
+          },
+          "card.deck": {
+            "size": "medium",
+            "padding": "compact",
+            "gap": "compact"
+          },
+          "card.item": {
+            "size": "medium",
+            "fontFamily": "host:display",
+            "fontSize": 20,
+            "fontWeight": 700,
+            "radius": 8,
+            "shadow": "small"
+          }
+        }
+      },
+      {
+        "id": "comfortable-cards",
+        "title": "舒展卡牌",
+        "description": "增加牌组留白并强化单张卡片层次。",
+        "targets": {
+          "card.deck": {
+            "size": "medium",
+            "padding": "comfortable",
+            "gap": "normal"
+          },
+          "card.item": {
+            "size": "medium",
+            "fontFamily": "host:display",
+            "fontSize": 22,
+            "fontWeight": 700,
+            "radius": 10,
+            "shadow": "medium"
+          }
+        }
+      },
+      {
+        "id": "compact-statistics",
+        "title": "紧凑统计",
+        "description": "缩小统计摘要的字号与间距。",
+        "targets": {
+          "statistics.summary": {
+            "size": "small",
+            "fontFamily": "host:numeric",
+            "fontSize": 14,
+            "fontWeight": 600,
+            "padding": "compact",
+            "gap": "compact"
+          }
+        }
+      },
+      {
+        "id": "readable-statistics",
+        "title": "易读统计",
+        "description": "放大统计摘要，适合远距离显示。",
+        "targets": {
+          "statistics.summary": {
+            "size": "medium",
+            "fontFamily": "host:numeric",
+            "fontSize": 18,
+            "fontWeight": 700,
+            "padding": "comfortable",
+            "gap": "normal"
+          }
+        }
+      },
+      {
+        "id": "quiet-version-badge",
+        "title": "弱化版本标记",
+        "description": "缩小版本标记并使用紧凑留白。",
+        "targets": {
+          "app.version-badge": {
+            "fontFamily": "host:numeric",
+            "fontSize": 10,
+            "fontWeight": 500,
+            "padding": "compact"
+          }
+        }
+      },
+      {
+        "id": "compact-title-bar",
+        "title": "紧凑标题栏",
+        "description": "缩小桌面端标题栏高度；Web 端会忽略此预设。",
+        "targets": {
+          "app.title-bar": {
+            "fontFamily": "host:ui",
+            "fontSize": 12,
+            "fontWeight": 600,
+            "density": "compact"
+          }
+        }
       }
     ],
-    "commands": [
-      { "id": "refresh", "title": "刷新插件", "titleEn": "Refresh plugin", "locations": ["command-palette", "page-header"], "icon": "arrow-clockwise-24-regular", "order": 300 }
+    "componentOverridePacks": [
+      {
+        "id": "hide-version-badge",
+        "title": "隐藏版本标记",
+        "description": "隐藏版本标记并收起其布局空间。",
+        "targets": {
+          "app.version-badge": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-roller-filters",
+        "title": "隐藏点名筛选器",
+        "description": "隐藏筛选器并沿用当前或默认点名范围。",
+        "targets": {
+          "roller.filters": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "compact-roller-filters",
+        "title": "压缩点名筛选器",
+        "description": "保留筛选器功能，并使用宿主紧凑布局。",
+        "targets": {
+          "roller.filters": { "visibility": "visible", "layout": "compact" }
+        }
+      },
+      {
+        "id": "hide-statistics-collapse",
+        "title": "隐藏统计并收起空间",
+        "description": "隐藏统计摘要并收起原有布局空间。",
+        "targets": {
+          "statistics.summary": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-statistics-reserve",
+        "title": "隐藏统计但保留空间",
+        "description": "隐藏统计摘要，同时保持页面布局稳定。",
+        "targets": {
+          "statistics.summary": { "visibility": "hidden", "layout": "reserve" }
+        }
+      },
+      {
+        "id": "focus-mode",
+        "title": "专注模式",
+        "description": "同时隐藏版本标记和点名筛选器。",
+        "targets": {
+          "app.version-badge": { "visibility": "hidden", "layout": "collapse" },
+          "roller.filters": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-card-controls",
+        "title": "隐藏卡牌控制区",
+        "description": "隐藏卡牌界面上的整组按钮与控制项，并收起布局空间。",
+        "targets": {
+          "card.controls": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-english-mode",
+        "title": "隐藏 English Mode",
+        "description": "仅隐藏 English Mode 开关，当前值继续由宿主使用。",
+        "targets": {
+          "roller.filter.english-mode": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-draw-target",
+        "title": "隐藏人员/小组选择",
+        "description": "仅隐藏抽取目标选择器，当前人员或小组模式保持不变。",
+        "targets": {
+          "roller.filter.draw-target": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-gender-filter",
+        "title": "隐藏性别筛选",
+        "description": "仅隐藏性别筛选器，当前或默认筛选值保持不变。",
+        "targets": {
+          "roller.filter.gender": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-draw-count-mode",
+        "title": "隐藏单人/多人选择",
+        "description": "仅隐藏抽取数量模式选择器，当前模式保持不变。",
+        "targets": {
+          "roller.filter.draw-count": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-duplicates-filter",
+        "title": "隐藏重复设置",
+        "description": "仅隐藏重复规则选择器，当前规则保持不变。",
+        "targets": {
+          "roller.filter.duplicates": { "visibility": "hidden", "layout": "collapse" }
+        }
+      },
+      {
+        "id": "hide-count-control",
+        "title": "隐藏抽取数量",
+        "description": "仅隐藏多人模式的数量控制，当前数量保持不变。",
+        "targets": {
+          "roller.filter.count": { "visibility": "hidden", "layout": "collapse" }
+        }
+      }
+    ],
+    "resultPresentations": [
+      {
+        "id": "single-compact",
+        "title": "单项紧凑",
+        "titleEn": "Single compact",
+        "description": "左对齐显示单项结果，隐藏算法与操作 ID。",
+        "targets": ["roller.result"],
+        "layout": "single",
+        "style": {
+          "size": "small",
+          "alignment": "start",
+          "showAlgorithm": false,
+          "showOperationId": false,
+          "showEnglishName": true
+        }
+      },
+      {
+        "id": "readable-list",
+        "title": "易读列表",
+        "titleEn": "Readable list",
+        "description": "按列表展示多个结果并保留算法信息。",
+        "targets": ["roller.result"],
+        "layout": "list",
+        "style": {
+          "size": "medium",
+          "alignment": "start",
+          "showAlgorithm": true,
+          "showOperationId": false,
+          "showEnglishName": true
+        }
+      },
+      {
+        "id": "clean-grid",
+        "title": "简洁网格",
+        "titleEn": "Clean grid",
+        "description": "居中网格展示，隐藏算法和英文名。",
+        "targets": ["roller.result"],
+        "layout": "grid",
+        "style": {
+          "size": "medium",
+          "alignment": "center",
+          "showAlgorithm": false,
+          "showOperationId": false,
+          "showEnglishName": false
+        }
+      },
+      {
+        "id": "spotlight",
+        "title": "聚光结果",
+        "titleEn": "Spotlight",
+        "description": "以大号居中布局突出权威结果。",
+        "targets": ["roller.result"],
+        "layout": "spotlight",
+        "style": {
+          "size": "large",
+          "alignment": "center",
+          "showAlgorithm": true,
+          "showOperationId": true,
+          "showEnglishName": true
+        }
+      }
     ]
   }
 }
-
