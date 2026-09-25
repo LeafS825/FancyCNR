@@ -1,0 +1,20 @@
+# 插件身份声明（新格式）：贡献内容写在同目录 contributions.json。
+# 两者不能与 manifest.json 同时存在；打包后 cnrp 会向本文件注入 integrity，
+# 该清单覆盖除 manifest.yml 外的所有包内文件（含 contributions.json）。
+schemaVersion: 1
+id: cn.leafsc.fancycnr
+name: FancyCNR
+version: 0.4.1
+author: LeafS825
+description: 为 CyreneNameRoller 提供受宿主管理的界面显隐、样式与结果布局选项。
+engine:
+  min: 1.4.0
+  max: 1.4.0
+entry: src/worker.js
+icon: assets/icon.svg
+readme: README.md
+permissions:
+  - storage:read
+  - ui:component-overrides
+  - ui:component-styles
+  - ui:result-presentations

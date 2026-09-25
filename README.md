@@ -1,6 +1,17 @@
 # FancyCNR
 
-FancyCNR 为 CyreneNameRoller API 1.4 提供由宿主校验和渲染的界面定制选项。启用插件后，侧边栏会出现 FancyCNR 一级导航，指向宿主原生 Fluent 设置页；页面内可以直接切换组件样式、组件显隐和权威结果布局。插件包含一个不执行后台业务的最小 Worker，以确保 Web/Tauri 都能正确建立插件实例。
+FancyCNR 为 CyreneNameRoller API 1.4 提供由宿主校验和渲染的界面定制选项。启用插件后，在插件管理卡片的「插件设置」入口打开宿主原生 Fluent 设置页，即可切换组件样式、组件显隐和权威结果布局。插件包含一个不执行后台业务的最小 Worker，以确保 Web/Tauri 都能正确建立插件实例。
+
+## 声明文件
+
+| 文件 | 内容 |
+| --- | --- |
+| `manifest.yml` | 身份、入口、图标与 `permissions`；绝不包含 `contributes` / `settings` / `pages` / `api` |
+| `contributions.json` | 扁平贡献对象：顶层 `settings`（样式、显隐与布局、结果布局三个分区），以及样式包、覆盖包与结果呈现 |
+
+两者不能与 `manifest.json` 同时存在。`integrity` 由 `cnrp pack` 注入 `manifest.yml`，覆盖除 `manifest.yml` 外的全部包内文件（含 `contributions.json`），请勿手写。
+
+宿主原生设置写在 `contributions.json` 顶层的 `settings` 区块（`sections[].fields[]`），不再使用 `pages[].native`；本插件的设置不是 iframe 页面，因此没有 `pages[]`。
 
 ## 界面显隐与布局
 
@@ -49,4 +60,13 @@ npm run validate
 npm run build
 ```
 
-构建产物位于 `dist/FancyCNR.cnrp`。
+`validate` / `build` 使用 `vendor/` 中随附的 `@starcyrene/cyrene-name-roller` SDK（1.4.0），与宿主使用同一套声明读取与校验逻辑。
+
+打包只收录 `scripts/stage-plugin.mjs` 中 `publishFiles` 列出的文件——即双声明文件与宿主引用的载荷（Worker、图标、README）。`scripts/`、CI 工作流、`package-lock.json`、`vendor/` 这些开发期内容不会进入 `.cnrp`。
+
+构建产物位于 `dist/FancyCNR-<version>.cnrp`（当前 `dist/FancyCNR-0.4.1.cnrp`）。
+
+## 更新日志
+
+- 0.4.1：插件声明迁移到 `manifest.yml` + `contributions.json` 拆分格式；插件身份改为 `cn.leafsc.fancycnr`，作者改为 LeafS825；设置页从 Dock 页面改为宿主设置区块（由插件卡片的「插件设置」进入）；校验与打包改用随附的 1.4 SDK，发布文件清单收窄到声明与宿主引用的载荷。
+- 0.4.0：升级到 CyreneNameRoller API 1.4。

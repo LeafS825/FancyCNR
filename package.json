@@ -1,11 +1,11 @@
 {
   "name": "fancycnr",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "validate": "cnrp validate .",
-    "build": "cnrp pack . --out dist/FancyCNR.cnrp"
+    "validate": "node scripts/validate.mjs",
+    "build": "node scripts/build.mjs"
   },
   "devDependencies": {
     "@starcyrene/cyrene-name-roller": "file:vendor/starcyrene-cyrene-name-roller-1.4.0.tgz"
